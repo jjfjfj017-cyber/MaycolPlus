@@ -1,24 +1,31 @@
+// Codigo de SoyMaycol y no quites creditos 
 import yts from "yt-search";
 
 const limit = 100;
 
 const handler = async (m, { conn, text, command }) => {
-    if (!text) return m.reply(`╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+    if (!text) return m.reply(`╭─❍「 ✦ MaycolPlus ✦ 」
 │
-├─ El hechizo necesita un encantamiento
+├─ Ay bebé, necesito algo para trabajar~
+├─ Dame el nombre de un video o URL de YouTube
+├─ y yo haré magia para ti... ♡
 │
-> Ingresa el nombre de un video o una URL de YouTube.
-├─ Consulta los conjuros disponibles con:
+├─ ¿No sabes cómo usarme? Escribe:
 │   ⇝ .help
+├─ Te aseguro que valdré la pena~
 ╰─✦`);
 
-    await m.react("🕛");
+    await m.react("🔥");
 
     try {
-        // Buscar con yt-search
         const res = await yts(text);
         if (!res || !res.videos || res.videos.length === 0) {
-            return m.reply("❌ No se encontraron resultados para tu búsqueda.");
+            return m.reply(`╭─❍「 ✦ MaycolPlus ✦ 」
+│
+├─ Mmm... no encuentro nada así bebé
+├─ Intenta con algo más específico
+├─ que me haga sudar un poquito~ ♡
+╰─✦`);
         }
 
         const video = res.videos[0];
@@ -32,20 +39,20 @@ const handler = async (m, { conn, text, command }) => {
         const isDirectDownload = ["play", "playaudio", "ytmp3", "play2", "playvid", "ytv", "ytmp4"].includes(command);
 
         if (isDirectDownload) {
-            // Crear mensaje inicial con información del video
-            const initialMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+            const initialMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
+├─ Ooh~ encontré algo delicioso:
 ├─ 「❀」${title}
 │
 ├─ ✧ Canal: ${authorName}
 ├─ ✧ Duración: ${durationTimestamp}
 ├─ ✧ Vistas: ${views}
 │
-├─ ⏳ Procesando descarga...
+├─ Déjame trabajar mi magia... ♡
 ├─ ▓░░░░░░░░░ 10%
+├─ Esto se va a poner caliente~
 ╰─✦`;
 
-            // Enviar mensaje inicial
             let sentMessage;
             if (thumbnail) {
                 sentMessage = await conn.sendMessage(m.chat, {
@@ -58,28 +65,28 @@ const handler = async (m, { conn, text, command }) => {
                 }, { quoted: m });
             }
 
-            // Iniciar descarga basada en el comando
             if (["play", "playaudio", "ytmp3"].includes(command)) {
                 await downloadAudio(conn, m, url, title, sentMessage, thumbnail);
             } else if (["play2", "playvid", "ytv", "ytmp4"].includes(command)) {
                 await downloadVideo(conn, m, url, title, sentMessage, thumbnail);
             }
         } else {
-            // Mostrar botones para selección manual
             const buttons = [
-                { buttonId: `.ytmp3 ${url}`, buttonText: { displayText: "♪ Descargar Audio ♪" }, type: 1 },
-                { buttonId: `.ytmp4 ${url}`, buttonText: { displayText: "♣ Descargar Video ♣" }, type: 1 },
+                { buttonId: `.ytmp3 ${url}`, buttonText: { displayText: "♪ Audio Seductor ♪" }, type: 1 },
+                { buttonId: `.ytmp4 ${url}`, buttonText: { displayText: "♣ Video Caliente ♣" }, type: 1 },
             ];
 
-            const processingMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+            const processingMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
+├─ Mmm~ qué delicia tenemos aquí:
 ├─ 「❀」${title}
 │
 ├─ ✧ Canal: ${authorName}
 ├─ ✧ Duración: ${durationTimestamp}
 ├─ ✧ Vistas: ${views}
 │
-├─ Selecciona el formato de descarga:
+├─ ¿Qué prefieres bebé?
+├─ Algo para los oídos o para los ojos~ ♡
 ╰─✦`;
 
             try {
@@ -98,18 +105,20 @@ const handler = async (m, { conn, text, command }) => {
                     }, { quoted: m });
                 }
             } catch {
-                await m.reply(processingMessage + "\n\nResponde:\n• 1 para audio\n• 2 para video");
+                await m.reply(processingMessage + "\n\nDime qué quieres amor:\n• 1 para audio\n• 2 para video");
             }
         }
 
     } catch (error) {
-        console.error("❌ Error general:", error);
-        await m.reply(`╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+        console.error("Error general:", error);
+        await m.reply(`╭─❍「 ✦ MaycolPlus ✦ 」
 │
-├─ El hechizo falló
+├─ Ay no bebé, algo salió mal...
+├─ Pero no te preocupes, sigo siendo tuya~ ♡
 ├─ Error: ${error.message}
+├─ Inténtalo otra vez, prometo portarme bien
 ╰─✦`);
-        await m.react("❌");
+        await m.react("💔");
     }
 };
 
@@ -121,22 +130,29 @@ const downloadAudio = async (conn, m, url, title, sentMessage, thumbnail) => {
     try {
         const cleanTitle = cleanName(title) + ".mp3";
         
-        // Iniciar animación de progreso
         progressInterval = setInterval(async () => {
             if (progress < 80) {
-                progress += Math.floor(Math.random() * 5) + 2; // Incremento aleatorio entre 2-6
+                progress += Math.floor(Math.random() * 5) + 2;
                 if (progress > 80) progress = 80;
                 
                 const progressBar = createProgressBar(progress);
-                const newMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+                const sexyMessages = [
+                    "Esto se está poniendo intenso~",
+                    "Déjame seguir trabajando para ti♡",
+                    "Casi estoy lista bebé~",
+                    "Un poquito más y será tuyo♡"
+                ];
+                const randomMessage = sexyMessages[Math.floor(Math.random() * sexyMessages.length)];
+                
+                const newMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ✧ Canal: ${title.split(' - ')[0] || "Desconocido"}
-├─ ✧ Procesando audio...
+├─ ${randomMessage}
+├─ ✧ Preparando tu audio sensual...
 │
-├─ ⏳ Descargando...
 ├─ ${progressBar} ${progress}%
+├─ No pares de mirarme trabajar~ ♡
 ╰─✦`;
 
                 if (newMessage !== lastProgressText) {
@@ -144,71 +160,70 @@ const downloadAudio = async (conn, m, url, title, sentMessage, thumbnail) => {
                     await updateMessage(conn, m.chat, sentMessage, newMessage, thumbnail);
                 }
             }
-        }, 500);
+        }, 800);
 
-        // Realizar descarga
-        const apiUrl = `https://api.vreden.my.id/api/ytmp3?url=${encodeURIComponent(url)}`;
+        const apiUrl = `https://myapiadonix.casacam.net/download/yt?url=${encodeURIComponent(url)}&format=audio`;
         const response = await fetch(apiUrl);
         const data = await response.json();
 
-        if (!data || data.status !== 200 || !data.result.download.url) {
-            throw new Error("No se pudo obtener el enlace de descarga");
+        if (!data || data.status !== "ok" || !data.success || !data.data.url) {
+            throw new Error("No pude conseguir lo que querías bebé");
         }
 
-        // Actualizar a 90% cuando se recibe la respuesta
         progress = 90;
         const progressBar90 = createProgressBar(progress);
-        const message90 = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+        const message90 = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ✧ Canal: ${data.result.metadata.author.name}
-├─ ✧ Enviando audio...
+├─ ✧ Calidad: ${data.data.quality}
+├─ Ya casi termino contigo~ ♡
 │
-├─ ⏳ Finalizando...
 ├─ ${progressBar90} ${progress}%
+├─ Preparándome para dártelo todo...
 ╰─✦`;
 
         await updateMessage(conn, m.chat, sentMessage, message90, thumbnail);
         clearInterval(progressInterval);
 
-        // Enviar archivo de audio
         await conn.sendMessage(m.chat, {
-            audio: { url: data.result.download.url },
+            audio: { url: data.data.url },
             mimetype: "audio/mpeg",
             fileName: cleanTitle,
         }, { quoted: m });
 
-        // Actualizar a 100% y finalizar
         const progressBar100 = createProgressBar(100);
-        const finalMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+        const finalMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ✧ Canal: ${data.result.metadata.author.name}
-├─ ✧ ¡Descarga completada!
+├─ ✧ Calidad: ${data.data.quality}
+├─ ¡Listo mi amor! ♡
 │
-├─ ✅ Audio enviado
 ├─ ${progressBar100} 100%
+├─ Espero que disfrutes lo que hice para ti~
+├─ ¿Quieres que haga algo más? ♡
 ╰─✦`;
 
         await updateMessage(conn, m.chat, sentMessage, finalMessage, thumbnail);
-        await m.react("✅");
+        await m.react("💋");
 
     } catch (error) {
         clearInterval(progressInterval);
-        console.error("❌ Error descargando audio:", error);
+        console.error("Error descargando audio:", error);
         
-        const errorMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+        const errorMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ❌ Error en la descarga
+├─ Ay bebé... algo no salió bien
+├─ Pero no te rindas conmigo~ ♡
 ├─ ${error.message}
+├─ Inténtalo otra vez, prometo compensarte
 ╰─✦`;
 
         await updateMessage(conn, m.chat, sentMessage, errorMessage, thumbnail);
-        await m.react("❌");
+        await m.react("😢");
     }
 };
 
@@ -220,22 +235,29 @@ const downloadVideo = async (conn, m, url, title, sentMessage, thumbnail) => {
     try {
         const cleanTitle = cleanName(title) + ".mp4";
         
-        // Iniciar animación de progreso
         progressInterval = setInterval(async () => {
             if (progress < 80) {
-                progress += Math.floor(Math.random() * 5) + 2; // Incremento aleatorio entre 2-6
+                progress += Math.floor(Math.random() * 5) + 2;
                 if (progress > 80) progress = 80;
                 
                 const progressBar = createProgressBar(progress);
-                const newMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+                const hotMessages = [
+                    "Mira cómo trabajo para ti~",
+                    "Este video va a estar delicioso♡",
+                    "Casi puedes tenerme completa~",
+                    "No pares de verme trabajar bebé♡"
+                ];
+                const randomMessage = hotMessages[Math.floor(Math.random() * hotMessages.length)];
+                
+                const newMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ✧ Canal: ${title.split(' - ')[0] || "Desconocido"}
-├─ ✧ Procesando video...
+├─ ${randomMessage}
+├─ ✧ Procesando tu video caliente...
 │
-├─ ⏳ Descargando...
 ├─ ${progressBar} ${progress}%
+├─ Te va a encantar lo que viene~ ♡
 ╰─✦`;
 
                 if (newMessage !== lastProgressText) {
@@ -243,71 +265,70 @@ const downloadVideo = async (conn, m, url, title, sentMessage, thumbnail) => {
                     await updateMessage(conn, m.chat, sentMessage, newMessage, thumbnail);
                 }
             }
-        }, 500);
+        }, 800);
 
-        // Realizar descarga
-        const apiUrl = `https://api.vreden.my.id/api/ytmp4?url=${encodeURIComponent(url)}`;
+        const apiUrl = `https://myapiadonix.casacam.net/download/yt?url=${encodeURIComponent(url)}&format=video`;
         const response = await fetch(apiUrl);
         const data = await response.json();
 
-        if (!data || data.status !== 200 || !data.result.download.url) {
-            throw new Error("No se pudo obtener el enlace de descarga");
+        if (!data || data.status !== "ok" || !data.success || !data.data.url) {
+            throw new Error("No pude darte lo que querías amor");
         }
 
-        // Actualizar a 90% cuando se recibe la respuesta
         progress = 90;
         const progressBar90 = createProgressBar(progress);
-        const message90 = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+        const message90 = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ✧ Canal: ${data.result.metadata.author.name}
-├─ ✧ Enviando video...
+├─ ✧ Calidad: ${data.data.quality}
+├─ Ya casi es tuyo completamente~ ♡
 │
-├─ ⏳ Finalizando...
 ├─ ${progressBar90} ${progress}%
+├─ Preparando la gran revelación...
 ╰─✦`;
 
         await updateMessage(conn, m.chat, sentMessage, message90, thumbnail);
         clearInterval(progressInterval);
 
-        // Enviar archivo de video
         await conn.sendMessage(m.chat, {
-            video: { url: data.result.download.url },
+            video: { url: data.data.url },
             mimetype: "video/mp4",
             fileName: cleanTitle,
         }, { quoted: m });
 
-        // Actualizar a 100% y finalizar
         const progressBar100 = createProgressBar(100);
-        const finalMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+        const finalMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ✧ Canal: ${data.result.metadata.author.name}
-├─ ✧ ¡Descarga completada!
+├─ ✧ Calidad: ${data.data.quality}
+├─ ¡Aquí tienes todo bebé! ♡
 │
-├─ ✅ Video enviado
 ├─ ${progressBar100} 100%
+├─ ¿Te gustó cómo lo hice?~
+├─ Siempre estoy lista para más... ♡
 ╰─✦`;
 
         await updateMessage(conn, m.chat, sentMessage, finalMessage, thumbnail);
-        await m.react("✅");
+        await m.react("🔥");
 
     } catch (error) {
         clearInterval(progressInterval);
-        console.error("❌ Error descargando video:", error);
+        console.error("Error descargando video:", error);
         
-        const errorMessage = `╭─❍「 ✦ 𝚂𝚘𝚢𝙼𝚊𝚢𝚌𝚘𝚕 <3 ✦ 」
+        const errorMessage = `╭─❍「 ✦ MaycolPlus ✦ 」
 │
 ├─ 「❀」${title}
 │
-├─ ❌ Error en la descarga
+├─ Oh no amor... hubo un problemita
+├─ Pero sabes que siempre vuelvo por más~ ♡
 ├─ ${error.message}
+├─ Dale otra oportunidad a tu MaycolPlus
 ╰─✦`;
 
         await updateMessage(conn, m.chat, sentMessage, errorMessage, thumbnail);
-        await m.react("❌");
+        await m.react("😈");
     }
 };
 
@@ -315,9 +336,7 @@ const updateMessage = async (conn, chatId, sentMessage, newText, thumbnail) => {
     try {
         const messageKey = sentMessage.key;
         
-        // Intentar diferentes métodos de edición
         if (thumbnail) {
-            // Si hay thumbnail, intentar editar el caption
             try {
                 await conn.relayMessage(chatId, {
                     protocolMessage: {
@@ -332,19 +351,16 @@ const updateMessage = async (conn, chatId, sentMessage, newText, thumbnail) => {
                     }
                 }, {});
             } catch {
-                // Método alternativo para WhatsApp Web
                 try {
                     await conn.sendMessage(chatId, {
                         edit: messageKey,
                         text: newText
                     });
                 } catch {
-                    // Si todo falla, no hacer nada para evitar spam
                     console.log("No se pudo editar el mensaje");
                 }
             }
         } else {
-            // Si es solo texto, editar directamente
             try {
                 await conn.sendMessage(chatId, {
                     edit: messageKey,

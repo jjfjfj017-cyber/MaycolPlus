@@ -1,39 +1,59 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 
-let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return conn.reply(m.chat, `⚠️ *Uso:* ${usedPrefix + command} <texto del video>`, m);
+const handler = async (msg, { conn, args, command }) => {
+  const chatId = msg.key.remoteJid;
+  const text = args.join(" ");
+  const participant = msg.key.participant || msg.key.remoteJid;
+
+  if (!text) {
+    return conn.sendMessage(chatId, {
+      text: `🚪👻 *Uso de ${command}:* escribe el deseo para que Hanako-kun lo cumpla en un video.`,
+    }, { quoted: msg });
+  }
 
   try {
-    let wait = await conn.sendMessage(m.chat, { 
-      text: '🗣️ *Generando tu video con IA, espera un toque...*' 
-    }, { quoted: m });
+    if (msg?.key) await conn.sendMessage(chatId, { react: { text: "🔮", key: msg.key } });
+    if (msg?.key) await conn.sendMessage(chatId, { react: { text: "🕯️", key: msg.key } });
 
-    
-    let apiURL = `https://myapiadonix.vercel.app/api/veo3?prompt=${encodeURIComponent(text)}&apikey=adonixveo3`;
-    
-    let res = await fetch(apiURL);
-    let json = await res.json();
+    const apiURL = `https://myapiadonix.vercel.app/ai/veo3?prompt=${encodeURIComponent("Hanako Kun style: " + text)}`;
+    const res = await fetch(apiURL);
+    const json = await res.json();
 
-    if (!json.success || !json.video_url) throw new Error(json.message || 'No se pudo generar el video');
+    if (!json.success || !json.video_url) throw new Error(json.message || "El fantasma de Hanako no pudo generar el video...");
 
-    
-    let video = await fetch(json.video_url);
-    let buffer = await video.buffer();
+    const videoUrl = json.video_url.trim();
+    const videoRes = await fetch(videoUrl);
+    const buffer = await videoRes.arrayBuffer().then(ab => Buffer.from(ab));
 
-    await conn.sendMessage(m.chat, { 
-      video: buffer, 
-      caption: `🎬 *Video generado:* ${json.prompt}\n\n`, 
-      gifPlayback: false 
-    }, { quoted: m });
+    await conn.sendMessage(chatId, {
+      video: buffer,
+      caption: `
+━━━━━━━━━━━━━━
+*_Magia Generada_*
+━━━━━━━━━━━━━━
+> Ahora me vas a pagar... Con Tu Cuerpo <3
+> Usando AdonixAPI uwu
+━━━━━━━━━━━━━━
+      `,
+      gifPlayback: false
+    }, { quoted: msg.key ? msg : null });
 
-    await conn.sendMessage(m.chat, { delete: wait.key });
-  } catch (e) {
-    await conn.reply(m.chat, `❌ *Error generando el video:* \n${e.message || e}`, m);
+    if (msg?.key) await conn.sendMessage(chatId, { react: { text: "✅", key: msg.key } });
+
+  } catch (err) {
+    console.error("❌ Error en comando Hanako-kun video:", err);
+
+    if (msg?.key) {
+      await conn.sendMessage(chatId, { react: { text: "💀", key: msg.key } });
+    }
+
+    conn.sendMessage(chatId, {
+      text: "👻❌ Hanako-kun no pudo cumplir tu deseo en video.",
+    }, { quoted: msg });
   }
 };
 
-handler.help = ['aivideo'];
-handler.tags = ['ia'];
-handler.command = ['aivideo', 'videoai', 'iavideo'];
-
-export default handler;
+handler.command = ["hanakokunvideo", "hanakovideo", "videohanako"];
+handler.tags = ["hanako"];
+handler.help = ["hanakokunvideo <deseo>"];
+module.exports = handler;

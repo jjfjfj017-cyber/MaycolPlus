@@ -17,7 +17,7 @@ Recuerda que la imagen puede tardar unos segundos en generarse.
     await conn.sendMessage(m.chat, { react: { text: '🕒', key: m.key } })
 
     // Llamada a tu API que devuelve la imagen directamente
-    const api = `https://myapiadonix.vercel.app/api/IAimagen?prompt=${encodeURIComponent(prompt)}`
+    const api = `https://api.siputzx.my.id/api/ai/flux?prompt=${encodeURIComponent(prompt)}`
     const res = await fetch(api)
     if (!res.ok) throw new Error(`Error HTTP ${res.status}`)
 
@@ -28,16 +28,16 @@ Recuerda que la imagen puede tardar unos segundos en generarse.
     await conn.sendMessage(m.chat, {
       image: buffer,
       caption: `
-✿ *¡Imagen Generada!*
+✿ *Imagen Generada* :)
 
 Detalles:
 ✎ *Prompt ›* ${prompt}
-↺ Disfruta tu nueva creación.
+↺ Disfruta tu nueva creación espiritual...
       `.trim(),
-      footer: 'Adonix API',
+      footer: 'MaycolPlus',
       buttons: [
-        { buttonId: `${usedPrefix}${command} ${prompt}`, buttonText: { displayText: '♻️ Otra' }, type: 1 },
-        { buttonId: `${usedPrefix}menu`, buttonText: { displayText: '❄️ Ir al menu' }, type: 1 }
+        { buttonId: `${usedPrefix}${command} ${prompt}`, buttonText: { displayText: '★ Otra' }, type: 1 },
+        { buttonId: `${usedPrefix}menu`, buttonText: { displayText: '♥ Ir al menu' }, type: 1 }
       ],
       headerType: 4
     }, { quoted: m })

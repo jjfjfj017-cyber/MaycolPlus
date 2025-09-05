@@ -34,7 +34,7 @@ const handler = async (m, { conn, text }) => {
     let aviso = `
 ━━━━━━ ◦ ❖ ◦ ━━━━━━
 ㅤ${global.namecanal}
-ㅤㅤㅤᴬᵛⁱˢᵒ ᵈᵉˡ ᵀᵉᵃᵐ
+ㅤㅤㅤㅤㅤᴬᵛⁱˢᵒ
 ━━━━━━ ◦ ❖ ◦ ━━━━━━
 
 ${text}

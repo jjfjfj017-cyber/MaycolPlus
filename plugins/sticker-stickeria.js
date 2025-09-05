@@ -39,7 +39,7 @@ let handler = async (m, { conn, args }) => {
   if (!prompt) return m.reply("⚠️ Escribe un texto para generar el sticker.")
 
   try {
-    const api = `https://myapiadonix.vercel.app/api/IAimagen?prompt=${encodeURIComponent(prompt)}`
+    const api = `https://api.siputzx.my.id/api/ai/flux?prompt=${encodeURIComponent(prompt)}`
     const res = await fetch(api)
     if (!res.ok) throw new Error(`Error HTTP ${res.status}`)
 
